@@ -1,11 +1,21 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.core.paginator import Paginator
+import json
 
 from .models import User, Post, Follow
+
+
+def edit(request, post_id):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        edit_post = Post.objects.get(pk=post_id)
+        edit_post.content = data["content"]
+        edit_post.save()
+        return JsonResponse({"message": "Change successful", "data": data["content"]})
 
 
 def index(request):
@@ -58,6 +68,26 @@ def profile(request, user_id):
         "followers": followers,
         "isFollowing": isFollowing,
         "user_profile": user
+    })
+
+def following(request):
+    currentUser = User.objects.get(pk=request.user.id)
+    followingPeople = Follow.objects.filter(user=currentUser)
+    allPosts = Post.objects.all().order_by('id').reverse()
+    followingPosts = []
+    for post in allPosts:
+        for person in followingPeople:
+            if person.user_follower == post.user:
+                followingPosts.append(post)
+    
+    #Pagination
+    paginator = Paginator(followingPosts, 10)
+    page_number = request.GET.get('page')
+    posts_of_the_page = paginator.get_page(page_number)
+
+    return render(request, "network/following.html", {
+       
+        "posts_of_the_page": posts_of_the_page
     })
 
 def follow(request):

@@ -34,6 +34,30 @@
             }
         })
     }
+
+    function likehandler(id, whoYouLiked){
+        const btn = document.getElementById(`${id}`);
+        if(whoYouLiked.indexOf(id) >= 0){
+            var liked = true;
+        } else {
+            var liked = false;
+        }
+
+        if(liked === true) {
+            fetch(`/remove_like/${id}`)
+            .then(response => response.json)
+            .then(result => {
+                btn.innerHTML = "Like"
+            })
+        } else {
+            fetch(`/add_like/${id}`)
+            .then(response => response.json)
+            .then(result => {
+                btn.innerHTML = "Dislike"
+            })
+        }
+        liked = !liked
+    }
 </script>    
 
     <h1>All Posts</h1>
@@ -82,6 +106,12 @@
                               </div>
                             </div>
                           </div>
+                    {% else %}
+                          {% if post.id in whoYouLiked %}
+                            <button class="btn btn-info col-1" onclick="likehandler({{post.id}}), {{whoYouLiked}}" id="{{post.id}}">Dislike</button>
+                          {% else %}
+                          <button class="btn btn-info col-1" onclick="likehandler({{post.id}}), {{whoYouLiked}}" id="{{post.id}}">Like</button>
+                          {% endif %}
                     {% endif %}
                 {% endif %}
 

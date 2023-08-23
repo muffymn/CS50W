@@ -5,4 +5,5 @@ This is a repository of projects for CS50's Web Programming with Python and Java
 * __Wiki__ : A Wikipedia-like online encyclopedia created using Django framework
 * __Commerce__ : an eBay-like e-commerce auction site that will allow users to post auction listings, place bids on listings,
                  comment on those listings, and add listings to a watchlist. Created using Django framework
-* __Mail__ : 
+* __Mail__ :  A front-end for an email client that makes API calls to send and receive emails
+* __Network__ : A Twitter-like social network website for making posts and following users
